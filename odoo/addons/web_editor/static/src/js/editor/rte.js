@@ -532,6 +532,22 @@ var RTEWidget = Widget.extend({
      *        page element)
      */
     _saveElement: function ($el, context, withLang) {
+        var model = '';
+        var field = '';
+        var rec_id = '';
+        var url = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+        for (var i = 0; i < url.length; i++) {
+            var urlparam = url[i].split('=');
+            if (urlparam[0] == 'model') {
+                model =  urlparam[1];
+            }
+            if (urlparam[0] == 'field') {
+                field =  urlparam[1];
+            }
+            if (urlparam[0] == 'rec_id') {
+                rec_id =  urlparam[1];
+            }
+        }
         return this._rpc({
             model: 'ir.ui.view',
             method: 'save',
@@ -539,7 +555,11 @@ var RTEWidget = Widget.extend({
                 $el.data('oe-id'),
                 this._getEscapedElement($el).prop('outerHTML'),
                 $el.data('oe-xpath') || null,
-                withLang ? context : _.omit(context, 'lang')
+                withLang ? context : _.omit(context, 'lang'),
+                'hc_edit',
+                model,
+                field,
+                rec_id
             ],
         });
     },
