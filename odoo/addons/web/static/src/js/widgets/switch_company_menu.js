@@ -19,19 +19,22 @@ var SwitchCompanyMenu = Widget.extend({
         return this._super();
     },
     start: function() {
-        var self = this;
-        this.$el.on('click', '.dropdown-menu li a[data-menu]', _.debounce(function(ev) {
-            ev.preventDefault();
-            var company_id = $(ev.currentTarget).data('company-id');
-            self._rpc({
-                    model: 'res.users',
-                    method: 'write',
-                    args: [[session.uid], {'company_id': company_id}],
-                })
-                .then(function() {
-                    location.reload();
-                });
-        }, 1500, true));
+    var self = this;
+    this.$el.on('click', '.dropdown-menu li a[data-menu]', _.debounce(function(ev) {
+        ev.preventDefault();
+        var company_id = $(ev.currentTarget).data('company-id');
+        var menuID = $('a[data-menu-xmlid="hc_website.menu_hc_res_company"]').data('menu');
+        var reload_url = 'web#id='+ company_id +'&view_type=form&model=res.company&menu_id='+menuID;
+        self._rpc({
+                model: 'res.users',
+                method: 'write',
+                args: [[session.uid], {'company_id': company_id}],
+            })
+            .then(function() {
+                window.location.href = reload_url;
+                location.reload();
+            });
+    }, 1500, true));
 
         var companies_list = '';
         if (this.isMobile) {
