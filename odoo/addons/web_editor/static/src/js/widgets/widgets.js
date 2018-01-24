@@ -948,7 +948,7 @@ var MediaDialog = Dialog.extend({
 
         this.only_images = this.options.only_images || this.options.select_images || (this.media && ($(this.media).parent().data("oe-field") === "image" || $(this.media).parent().data("oe-type") === "image"));
         if (this.only_images) {
-            this.$('[href="#editor-media-document"], [href="#editor-media-video"], [href="#editor-media-icon"]').addClass('hidden');
+            this.$('[href="#editor-media-document"], [href="#editor-media-video"], [href="#editor-media-icon"], [href="#editor-media-iframe"]').addClass('hidden');
         }
 
         this.opened((function () {
@@ -964,6 +964,9 @@ var MediaDialog = Dialog.extend({
                     this.$('[href="#editor-media-video"]').tab('show');
                 } else if (this.media.className.match(/(^|\s)fa($|\s)/)) {
                     this.$('[href="#editor-media-icon"]').tab('show');
+                } else if (this.media.parentNode.className.match(/(^|\s)media_iframe_iframe($|\s)/)) {
+                    this.media = this.media.parentNode;
+                    this.$('[href="#editor-media-iframe"]').tab('show');
                 }
             }
         }).bind(this));
@@ -977,6 +980,8 @@ var MediaDialog = Dialog.extend({
             this.iconDialog.appendTo(this.$("#editor-media-icon"));
             this.videoDialog = new VideoDialog(this, this.media, this.options);
             this.videoDialog.appendTo(this.$("#editor-media-video"));
+            this.iframeDialog = new IframeDialog(this, this.media, this.options);
+            this.iframeDialog.appendTo(this.$("#editor-media-iframe"));
         }
 
         this.active = this.imageDialog;
@@ -994,6 +999,9 @@ var MediaDialog = Dialog.extend({
                 self.$('.nav-tabs li.previous, .nav-tabs li.next').addClass("hidden");
             } else if ($(event.target).is('[href="#editor-media-video"]')) {
                 self.active = self.videoDialog;
+                self.$('.nav-tabs li.search').addClass("hidden");
+            } else if ($(event.target).is('[href="#editor-media-iframe"]')) {
+                self.active = self.iframeDialog;
                 self.$('.nav-tabs li.search').addClass("hidden");
             }
         });
@@ -1285,6 +1293,184 @@ var LinkDialog = Dialog.extend({
                 .attr("class", classes.replace(/pull-\w+/, '') + " o_btn_preview");
         });
     }
+});
+    
+// iFrame widget customized for Hotelscentric
+var IframeDialog = Widget.extend({
+    template: 'web_editor.dialog.iframe',
+    xmlDependencies: ['/web_editor/static/src/xml/editor.xml'],
+    events : {
+        'input textarea#o_video_text': '_onIframeCodeInput',
+        'change textarea#o_video_text': '_onIframeCodeChange',
+    },
+
+    /**
+     * @constructor
+     */
+    init: function (parent, media) {
+        this._super.apply(this, arguments);
+        this.parent = parent;
+        this.media = media;
+        this._onIframeCodeInput = _.debounce(this._onIframeCodeInput, 1000);
+    },
+    /**
+     * @override
+     */
+    start: function () {
+        this.$preview = this.$('.preview-container').detach();
+        this.$content = this.$('.o_video_dialog_iframe');
+
+        var $media = $(this.media);
+        if ($media.hasClass('media_iframe_video')) {
+            var src = $media.data('src') || '';
+            this.$('textarea#o_video_text').val(src);
+
+            this._updateVideo();
+        }
+
+        return this._super.apply(this, arguments);
+    },
+
+    //--------------------------------------------------------------------------
+    // Public
+    //--------------------------------------------------------------------------
+
+    /**
+     * @override
+     */
+    save: function () {
+        this._updateVideo();
+        //this.media = this.$content[0];
+        //return this.media;
+
+        if (this.$('.o_video_dialog_iframe').is('iframe')) {
+            var $content = $(
+                '<div class="media_iframe_video" data-oe-expression="' + this.$content.attr('src') + '">'+
+                    '<div class="css_editable_mode_display">&nbsp;</div>'+
+                    '<div class="media_iframe_video_size" contenteditable="false">&nbsp;</div>'+
+                    '<iframe src="' + this.$content.attr('src') + '" frameborder="0" contenteditable="false"></iframe>'+
+                '</div>'
+            );
+            $(this.media).replaceWith($content);
+            this.media = $content[0];
+            return this.media;
+        }
+    },
+    /**
+     * @override
+     */
+    clear: function () {
+        if (!this.media) {
+            return;
+        }
+        if (this.media.dataset.src) {
+            try {
+                delete this.media.dataset.src;
+            } catch (e) {
+                this.media.dataset.src = undefined;
+            }
+        }
+        this.media.className = this.media.className.replace(/(^|\s)media_iframe_iframe(\s|$)/g, ' ');
+    },
+
+    //--------------------------------------------------------------------------
+    // Private
+    //--------------------------------------------------------------------------
+
+    /**
+     * Creates a video node according to the given URL and options. If not
+     * possible, returns an error code.
+     *
+     * @private
+     * @param {string} url
+     * @param {Object} options
+     * @returns {Object}
+     *          $video -> the created video jQuery node
+     *          type -> the type of the created video
+     *          errorCode -> if defined, either '0' for invalid URL or '1' for
+     *              unsupported video provider
+     */
+    _createVideoNode: function (url) {
+
+        var videoType = 'ifr';
+        var $video = $(url).addClass('o_video_dialog_iframe');;
+        return {$video: $video, type: videoType};
+
+    },
+    /**
+     * Updates the video preview according to video code and enabled options.
+     *
+     * @private
+     */
+    _updateVideo: function () {
+        // Reset the feedback
+        this.$content.empty();
+        this.$('#o_video_form_group').removeClass('has-error has-success');
+        this.$('.o_video_dialog_options li').addClass('hidden');
+
+        // Check video code
+        var $textarea = this.$('textarea#o_video_text');
+        var code = $textarea.val().trim();
+        if (!code) {
+            return;
+        }
+
+        var url = code
+
+        var query = this._createVideoNode(url);
+
+        var $content = query.$video;
+        if (!$content) {
+            switch (query.errorCode) {
+                case 0:
+                    $content = $('<div/>', {
+                        class: 'alert alert-danger o_video_dialog_iframe',
+                        text: _t("The provided url is not valid"),
+                    });
+                    break;
+                case 1:
+                    $content = $('<div/>', {
+                        class: 'alert alert-warning o_video_dialog_iframe',
+                        text: _t("The provided url does not reference any supported video"),
+                    });
+                    break;
+            }
+        }
+        this.$content.replaceWith($content);
+        this.$content = $content;
+    },
+
+
+    //--------------------------------------------------------------------------
+    // Handlers
+    //--------------------------------------------------------------------------
+
+    /**
+     * Called when a video option changes -> Updates the video preview.
+     *
+     * @private
+     */
+    _onUpdateIframeOption: function () {
+        this._updateVideo();
+    },
+    /**
+     * Called when the video code (URL / Iframe) change is confirmed -> Updates
+     * the video preview immediately.
+     *
+     * @private
+     */
+    _onIframeCodeChange: function () {
+        this._updateVideo();
+    },
+    /**
+     * Called when the video code (URL / Iframe) changes -> Updates the video
+     * preview (note: this function is automatically debounced).
+     *
+     * @private
+     */
+    _onIframeCodeInput: function () {
+        this._updateVideo();
+    },
 });
 
 return {
