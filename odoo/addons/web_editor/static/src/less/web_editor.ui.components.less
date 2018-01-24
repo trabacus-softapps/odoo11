@@ -396,6 +396,71 @@ body .modal {
                     }
                 }
             }
+            
+            //IFRAME TAB
+            #editor-media-iframe .well {
+                padding: 0;
+                .o-flex-display();
+                .o-flex-flow(row, wrap);
+
+                .o_video_dialog_form {
+                    .o-flex(1, 1, auto);
+                    min-width: 0;
+                    padding: 20px;
+
+                    #o_video_form_group {
+                        position: relative;
+                        width: 100%;
+
+                        > textarea {
+                            width: 100%;
+                            min-height: 95px;
+                            padding-bottom: 25px;
+                            overflow-y: scroll;
+                        }
+
+                        > .o_validate_feedback {
+                            .o-position-absolute(auto, 10px, 10px);
+
+                            > .fa {
+                                display: none;
+                            }
+                        }
+                        &.has-error > .o_validate_feedback > .fa-exclamation-triangle {
+                            display: block;
+                        }
+                        &.has-success > .o_validate_feedback > .fa-check {
+                            display: block;
+                        }
+                    }
+                }
+
+                #video-preview {
+                    position: relative;
+                    .o-flex(1, 0, 50%);
+                    .o-flex-display();
+                    .o-flex-flow(column, nowrap);
+                    .o-justify-content(center);
+
+                    .o-we-preview-box(0 19px);
+                    border: none;
+
+                    .media_iframe_video {
+                        width: 100%;
+                    }
+
+                    .o_video_dialog_iframe {
+                        .o-we-preview-content();
+                        max-width: 100%;
+                        max-height: 100%;
+
+                        &.alert {
+                            .o-animation(fadeInDownSmall, 700ms, @fill-mode: forwards);
+                            margin: 0 auto;
+                        }
+                    }
+                }
+            }
         }
     }
 
