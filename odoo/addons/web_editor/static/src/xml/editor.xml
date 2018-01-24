@@ -51,6 +51,7 @@
             <li><a href="#editor-media-document" data-toggle="tab">Document</a></li>
             <li><a href="#editor-media-icon" data-toggle="tab">Pictogram</a></li>
             <li><a href="#editor-media-video" data-toggle="tab">Video</a></li>
+            <li><a href="#editor-media-iframe" data-toggle="tab">Iframe</a></li>
             <li class="search">
                 <ul class="pager mb0 mt0">
                     <li class="previous">
@@ -74,6 +75,7 @@
             <div class="tab-pane fade" id="editor-media-document"/>
             <div class="tab-pane fade" id="editor-media-icon"/>
             <div class="tab-pane fade" id="editor-media-video"/>
+            <div class="tab-pane fade" id="editor-media-iframe"/>
         </div>
     </div>
 
@@ -231,7 +233,27 @@
             </div>
         </form>
     </t>
-
+    
+    <!--Iframe choosing part of the Media Dialog Hotels Centric-->
+    <t t-name="web_editor.dialog.iframe">
+        <form action="#" class="form-inline well">
+            <div class="o_video_dialog_form">
+                <div class="form-group" id="o_video_form_group">
+                    <label class="mt8" for="o_video_text">Iframe code <small class="text-muted">(URL or Embed)</small></label>
+                    <textarea class="form-control url" id="o_video_text" placeholder="Copy-paste your URL or embed code here"/>
+                    <label class="control-label o_validate_feedback" for="o_video_text"><i class="fa fa-check"/><i class="fa fa-exclamation-triangle"/></label>
+                </div>
+            </div>
+            <div id="video-preview">
+                <div class="o_video_dialog_preview_text small mt16 mb8 hidden">Preview</div>
+                <div class="media_iframe_iframe">
+                    <div class="media_iframe_video_size"/>
+                    <iframe class="o_video_dialog_iframe" allowfullscreen="allowfullscreen" frameborder="0" src=""/>
+                </div>
+            </div>
+        </form>
+    </t>
+    
     <!-- Link Dialog (allows to choose a style and content for a link on the page) -->
     <div t-name="web_editor.dialog.link" class="o_link_dialog">
         <div class="row">
