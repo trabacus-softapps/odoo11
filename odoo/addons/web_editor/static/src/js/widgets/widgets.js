@@ -87,7 +87,7 @@ var ImageDialog = Widget.extend({
     template: 'web_editor.dialog.image',
     xmlDependencies: ['/web_editor/static/src/xml/editor.xml'],
     IMAGES_PER_ROW: 6,
-    IMAGES_ROWS: 2,
+    IMAGES_ROWS: 10,
     events: _.extend({}, Dialog.prototype.events, {
         'change .url-source': function (e) {
             this.changed($(e.target));
@@ -282,7 +282,7 @@ var ImageDialog = Widget.extend({
         }
     },
     fetch_existing: function (needle) {
-        var domain = [['res_model', '=', 'ir.ui.view']].concat(this.domain);
+        var domain = [['res_model', '=', 'hc.image.bank']].concat(this.domain);
         if (needle && needle.length) {
             domain.push('|', ['datas_fname', 'ilike', needle], ['name', 'ilike', needle]);
         }
@@ -292,8 +292,8 @@ var ImageDialog = Widget.extend({
             args: [],
             kwargs: {
                 domain: domain,
-                fields: ['name', 'mimetype', 'checksum', 'url', 'type'],
-                order: [{name: 'id', asc: false}],
+                fields: ['name', 'mimetype', 'checksum', 'url', 'type', 'hc_image_bank_id'],
+                order: [{name: 'hc_image_bank_id', asc: true},{name: 'write_date', desc: true}],               
                 context: weContext.get(),
             }
         }).then(this.proxy('fetched_existing'));
@@ -326,6 +326,26 @@ var ImageDialog = Widget.extend({
         this.$('.help-block').empty();
 
         this.$('.existing-attachments').replaceWith(QWeb.render('web_editor.dialog.image.existing.content', {rows: rows}));
+        this._rpc({
+            model: 'ir.attachment',
+            method: 'search_read',
+            args: [],
+            kwargs: {
+                domain:[['res_model', '=', 'hc.image.bank']],
+                fields: ['name', 'mimetype', 'checksum', 'url', 'type', 'hc_image_bank_id'],
+                order: [{name: 'hc_image_bank_id', asc: true},{name: 'write_date', desc: true}],
+            }
+        }).then(function (result){
+            var selected = $('.imagebank').find('select').find("option:selected").text();
+            var imgselect = _(result).chain()
+            .slice(from, from + per_screen)
+            .groupBy(function (_, index) { return Math.floor(index / self.IMAGES_PER_ROW); })
+            .values()
+            .value();
+            var prev = $('.folder').val();
+            $('.imagebank').replaceWith(QWeb.render('web_editor.dialog.image.bank', {rows: imgselect}));
+            $('.folder').val(prev);
+        });
         this.parent.$('.pager')
             .find('li.previous a').toggleClass('disabled', (from === 0)).end()
             .find('li.next a').toggleClass('disabled', (from + per_screen >= records.length));
@@ -925,6 +945,7 @@ var MediaDialog = Dialog.extend({
     ),
     events : _.extend({}, Dialog.prototype.events, {
         'input input#icon-search': 'search',
+        'change select': 'select_search',
     }),
     init: function (parent, options, $editable, media) {
         this._super(parent, _.extend({}, {
@@ -1063,11 +1084,21 @@ var MediaDialog = Dialog.extend({
     search: function () {
         var self = this;
         var needle = this.$("input#icon-search").val();
+        var folder = this.$("select").val();
         clearTimeout(this.searchTimer);
         this.searchTimer = setTimeout(function () {
-            self.active.search(needle || "");
+            self.active.search((folder && folder + '-'  || '') + (needle && needle || '') || "");
         },250);
-    }
+    },
+    select_search: function () {
+        var self = this;
+        var needle = this.$("input#icon-search").val();
+        var folder = this.$("select").val();
+        clearTimeout(this.searchTimer);
+        console.log('select_search', needle);
+        this.searchTimer = setTimeout(function () {
+            self.active.search(folder || "");
+        },250);
 });
 
 /**
