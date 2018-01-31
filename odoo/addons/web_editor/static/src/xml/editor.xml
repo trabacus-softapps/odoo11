@@ -68,6 +68,7 @@
                     <span class="fa fa-search"/>
                 </div>
             </li>
+            <li class="imagebank"/>
         </ul>
         <!-- Tab panes -->
         <div class="tab-content">
@@ -88,7 +89,7 @@
                   target="fileframe"
                   class="form-inline">
                 <input type="hidden" name="csrf_token" t-att-value="csrf_token"/>
-                <div class="well">
+                <!--<div class="well">
                     <div class="form-group pull-left">
                         <input type="file" name="upload" t-att-accept="widget.accept" multiple="multiple" style="position: absolute; opacity: 0; width: 1px; height: 1px;"/>
                         <input type="hidden" name="disable_optimization" value=""/>
@@ -114,7 +115,7 @@
                             <button class="btn btn-default" type="submit">Add</button>
                         </div>
                     </div>
-                </div>
+                </div>-->
                 <input type="hidden" name="func"/>
                 <div class="help-block"/>
                 <div class="existing-attachments">
@@ -149,9 +150,31 @@
                 <div class="col-sm-2 o_existing_attachment_cell" t-as="attachment" t-foreach="row">
                     <i class="fa fa-times o_existing_attachment_remove" t-att-data-id="attachment.id"/>
                     <div class="o_attachment_border"><div t-att-data-src="attachment.src" t-att-data-url="attachment.url" t-att-alt="attachment.name" t-att-title="attachment.name" t-att-data-id="attachment.id" t-att-data-mimetype="attachment.mimetype" class="o_image"/></div>
+                    <t t-esc="attachment.name"/>
                 </div>
             </div>
         </div>
+    </t>
+    <t t-name="web_editor.dialog.image.bank">
+        <li class="imagebank" style="float: right;">
+            <t t-set="prev"/>
+            <button class="btn btn-primary" type="button">Select Folder</button>
+            <div class="btn-group">
+                <select class="folder btn btn-primary dropdown-toggle">
+                    <option value=""></option>
+                    <t t-as="row" t-foreach="rows">
+                        <t t-as="attachment" t-foreach="row">
+                            <t t-if="prev != attachment.hc_image_bank_id[1]">
+                                <option>
+                                    <t t-esc="attachment.hc_image_bank_id[1]"/>
+                                </option>
+                            </t>
+                            <t t-set="prev" t-value="attachment.hc_image_bank_id[1]"/>
+                        </t>
+                    </t>
+                </select>
+            </div>
+        </li>
     </t>
     <t t-name="web_editor.dialog.image.existing.error">
         <div class="help-block">
