@@ -1098,7 +1098,7 @@ var MediaDialog = Dialog.extend({
         console.log('select_search', needle);
         this.searchTimer = setTimeout(function () {
             self.active.search(folder || "");
-        },250);
+        },250); },
 });
 
 /**
