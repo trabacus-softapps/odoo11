@@ -145,19 +145,27 @@ class Web_Editor(http.Controller):
         # one file is uploaded, as upload references the first file
         # therefore we have to recover the files from the request object
         Attachments = request.env['ir.attachment']  # registry for the attachment table
-
+        print ("kwargs",kwargs)
+        hidden_folder_id = kwargs.get('hidden_folder_id', False)
         uploads = []
         message = None
         if not upload: # no image provided, storing the link and the image name
             name = url.split("/").pop()                       # recover filename
             attachment = Attachments.create({
                 'name': name,
+                'datas_fname': name,
                 'type': 'url',
                 'url': url,
                 'public': True,
-                'res_model': 'ir.ui.view',
+                'res_model': 'hc.image.bank',
+                'hc_image_bank_id' : hidden_folder_id
             })
-            uploads += attachment.read(['name', 'mimetype', 'checksum', 'url'])
+            if hidden_folder_id:
+                hidden_folder_obj = request.env['hc.image.bank']
+                hidden_folder_browse = hidden_folder_obj.browse(int(hidden_folder_id))
+                hidden_folder_browse.write({'attachment_ids': [(4, attachment.id)]})
+
+            uploads += attachment.read(['name', 'mimetype', 'checksum', 'url', 'hc_image_bank_id'])
         else:                                                  # images provided
             try:
                 attachments = request.env['ir.attachment']
@@ -180,10 +188,15 @@ class Web_Editor(http.Controller):
                         'datas': base64.b64encode(data),
                         'datas_fname': c_file.filename,
                         'public': True,
-                        'res_model': 'ir.ui.view',
+                        'res_model': 'hc.image.bank',
+                        'hc_image_bank_id': hidden_folder_id
                     })
                     attachments += attachment
-                uploads += attachments.read(['name', 'mimetype', 'checksum', 'url'])
+                    if hidden_folder_id:
+                        hidden_folder_obj = request.env['hc.image.bank']
+                        hidden_folder_browse = hidden_folder_obj.browse(int(hidden_folder_id))
+                        hidden_folder_browse.write({'attachment_ids': [(4, attachment.id)]})
+                uploads += attachments.read(['name', 'mimetype', 'checksum', 'url', 'hc_image_bank_id'])
             except Exception as e:
                 logger.exception("Failed to upload image to attachment")
                 message = pycompat.text_type(e)
