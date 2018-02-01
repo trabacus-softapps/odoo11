@@ -232,6 +232,12 @@ var ImageDialog = Widget.extend({
     },
     form_submit: function (event) {
         var self = this;
+        var folder_name = $('#folder_name').val();
+        $('#hidden_folder_id').val(folder_name);
+        if (folder_name == '') {
+            alert('Please Select the Folder');
+            return false;
+        }
         var $form = this.$('form[action="/web_editor/attachment/add"]');
         if (!$form.find('input[name="upload"]').val().length) {
             if (this.selected_existing().size()) {
@@ -327,23 +333,18 @@ var ImageDialog = Widget.extend({
 
         this.$('.existing-attachments').replaceWith(QWeb.render('web_editor.dialog.image.existing.content', {rows: rows}));
         this._rpc({
-            model: 'ir.attachment',
+            model: 'hc.image.bank',
             method: 'search_read',
             args: [],
             kwargs: {
-                domain:[['res_model', '=', 'hc.image.bank']],
-                fields: ['name', 'mimetype', 'checksum', 'url', 'type', 'hc_image_bank_id'],
-                order: [{name: 'hc_image_bank_id', asc: true},{name: 'write_date', desc: true}],
+                domain:[],
+                fields: ['name'],
+                order: [{name: 'id', asc: true},{name: 'write_date', asc: true}],
             }
         }).then(function (result){
-            var selected = $('.imagebank').find('select').find("option:selected").text();
-            var imgselect = _(result).chain()
-            .slice(from, from + per_screen)
-            .groupBy(function (_, index) { return Math.floor(index / self.IMAGES_PER_ROW); })
-            .values()
-            .value();
+            var selected = $('.imagebank').find('select').find("option:selected").text();            
             var prev = $('.folder').val();
-            $('.imagebank').replaceWith(QWeb.render('web_editor.dialog.image.bank', {rows: imgselect}));
+            $('.imagebank').replaceWith(QWeb.render('web_editor.dialog.image.bank', {rows: result}));
             $('.folder').val(prev);
         });
         this.parent.$('.pager')
@@ -1084,7 +1085,7 @@ var MediaDialog = Dialog.extend({
     search: function () {
         var self = this;
         var needle = this.$("input#icon-search").val();
-        var folder = this.$("select").val();
+        var folder = this.$("#folder_name option:selected").text().trim();
         clearTimeout(this.searchTimer);
         this.searchTimer = setTimeout(function () {
             self.active.search((folder && folder + '-'  || '') + (needle && needle || '') || "");
@@ -1093,7 +1094,7 @@ var MediaDialog = Dialog.extend({
     select_search: function () {
         var self = this;
         var needle = this.$("input#icon-search").val();
-        var folder = this.$("select").val();
+        var folder = this.$("#folder_name option:selected").text().trim();
         clearTimeout(this.searchTimer);
         console.log('select_search', needle);
         this.searchTimer = setTimeout(function () {
