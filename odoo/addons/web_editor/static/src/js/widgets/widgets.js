@@ -199,7 +199,7 @@ var ImageDialog = Widget.extend({
                 $(this.media).replaceWith(media);
                 this.media = media;
             }
-            this.media.setAttribute('src', img.src);
+            this.media.setAttribute('src', img.src.replace('/160x120/','/'));
         } else {
             if (this.media.tagName !== "A") {
                 $('.note-control-selection').hide();
