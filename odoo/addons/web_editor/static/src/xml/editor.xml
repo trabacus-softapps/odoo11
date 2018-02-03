@@ -252,7 +252,7 @@
             </div>
         </form>
     </t>
-    
+
     <!--Iframe choosing part of the Media Dialog Hotels Centric-->
     <t t-name="web_editor.dialog.iframe">
         <form action="#" class="form-inline well">
@@ -272,7 +272,7 @@
             </div>
         </form>
     </t>
-    
+
     <!-- Link Dialog (allows to choose a style and content for a link on the page) -->
     <div t-name="web_editor.dialog.link" class="o_link_dialog">
         <div class="row">
