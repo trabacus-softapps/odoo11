@@ -93,10 +93,17 @@ var ImageDialog = Widget.extend({
             this.changed($(e.target));
         },
         'click button.filepicker': function () {
+            var folder_name = $('#folder_name').val();
+            $('#hidden_folder_id').val(folder_name);
+            if (folder_name == '') {
+                alert('Please Select the Folder.');
+                return false;
+                }
             var filepicker = this.$('input[type=file]');
             if (!_.isEmpty(filepicker)) {
                 filepicker[0].click();
             }
+
         },
         'click .js_disable_optimization': function () {
             this.$('input[name="disable_optimization"]').val('1');
@@ -299,7 +306,7 @@ var ImageDialog = Widget.extend({
             kwargs: {
                 domain: domain,
                 fields: ['name', 'mimetype', 'checksum', 'url', 'type', 'hc_image_bank_id'],
-                order: [{name: 'hc_image_bank_id', asc: true},{name: 'write_date', desc: true}],               
+                order: [{name: 'hc_image_bank_id', asc: true},{name: 'write_date', desc: true}],
                 context: weContext.get(),
             }
         }).then(this.proxy('fetched_existing'));
@@ -342,7 +349,7 @@ var ImageDialog = Widget.extend({
                 order: [{name: 'id', asc: true},{name: 'write_date', asc: true}],
             }
         }).then(function (result){
-            var selected = $('.imagebank').find('select').find("option:selected").text();            
+            var selected = $('.imagebank').find('select').find("option:selected").text();
             var prev = $('.folder').val();
             $('.imagebank').replaceWith(QWeb.render('web_editor.dialog.image.bank', {rows: result}));
             $('.folder').val(prev);
