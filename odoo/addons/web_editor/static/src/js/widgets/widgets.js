@@ -199,7 +199,7 @@ var ImageDialog = Widget.extend({
                 $(this.media).replaceWith(media);
                 this.media = media;
             }
-            this.media.setAttribute('src', img.src.replace('/160x120/','/'));
+            this.media.setAttribute('src', img.src);
         } else {
             if (this.media.tagName !== "A") {
                 $('.note-control-selection').hide();
@@ -318,7 +318,7 @@ var ImageDialog = Widget.extend({
             return (r.url || r.id);
         });
         _.each(this.records, function (record) {
-            record.src = record.url || _.str.sprintf('/web/image/%s/160x120/%s', record.id, record.name); // Name is added for SEO purposes
+            record.src = record.url || _.str.sprintf('/web/image/%s/%s', record.id, record.name); // Name is added for SEO purposes
             record.is_document = !(/gif|jpe|jpg|png/.test(record.mimetype));
         });
         this.display_attachments();
