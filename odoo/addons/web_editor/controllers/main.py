@@ -431,4 +431,4 @@ class Web_Editor(http.Controller):
             resource_path = "%s.%s" % (m.group(2), m.group(5)),
             customized = bool(m.group(3)),
             bundle = m.group(4) or False
-        )
+        ) 
