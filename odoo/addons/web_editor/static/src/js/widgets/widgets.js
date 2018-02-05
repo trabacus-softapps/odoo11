@@ -96,7 +96,7 @@ var ImageDialog = Widget.extend({
             var folder_name = $('#folder_name').val();
             $('#hidden_folder_id').val(folder_name);
             if (folder_name == '') {
-                alert('Please Select the Folder.');
+                alert('Please select the folder to which you wish to add this image, from the drop down above.');
                 return false;
                 }
             var filepicker = this.$('input[type=file]');
@@ -242,7 +242,7 @@ var ImageDialog = Widget.extend({
         var folder_name = $('#folder_name').val();
         $('#hidden_folder_id').val(folder_name);
         if (folder_name == '') {
-            alert('Please Select the Folder');
+            alert('Please select the folder to which you wish to add this image, from the drop down above.');
             return false;
         }
         var $form = this.$('form[action="/web_editor/attachment/add"]');
@@ -306,7 +306,8 @@ var ImageDialog = Widget.extend({
             kwargs: {
                 domain: domain,
                 fields: ['name', 'mimetype', 'checksum', 'url', 'type', 'hc_image_bank_id'],
-                order: [{name: 'hc_image_bank_id', asc: true},{name: 'write_date', desc: true}],
+                order: [{name: 'id', desc: true}],
+                //order: [{name: 'hc_image_bank_id', asc: true},{name: 'write_date', desc: true}],
                 context: weContext.get(),
             }
         }).then(this.proxy('fetched_existing'));
@@ -346,7 +347,7 @@ var ImageDialog = Widget.extend({
             kwargs: {
                 domain:[],
                 fields: ['name'],
-                order: [{name: 'id', asc: true},{name: 'write_date', asc: true}],
+                order: [{name: 'id', desc: true}],
             }
         }).then(function (result){
             var selected = $('.imagebank').find('select').find("option:selected").text();
