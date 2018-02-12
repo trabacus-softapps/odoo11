@@ -113,7 +113,7 @@ class MailMail(models.Model):
             if 'filters' in self._context:
                 filters.extend(self._context['filters'])
             # TODO: make limit configurable
-            ids = self.search(filters, limit=90).ids
+            ids = self.search(filters, limit=300).ids
         res = None
         try:
             # auto-commit except in testing mode
