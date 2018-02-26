@@ -23,7 +23,7 @@ var SwitchCompanyMenu = Widget.extend({
     this.$el.on('click', '.dropdown-menu li a[data-menu]', _.debounce(function(ev) {
         ev.preventDefault();
         var company_id = $(ev.currentTarget).data('company-id');
-        var menuID = $('a[data-menu-xmlid="hc_website.menu_hc_res_company"]').data('menu');
+        var menuID = $('a[data-menu-xmlid="hc_crm.menu_hc_booking"]').data('menu');
         //var reload_url = 'web#id='+ company_id +'&view_type=form&model=res.company&menu_id='+menuID;
         var reload_url = 'web#view_type=list&model=crm.lead&menu_id=' + menuID + ''
         self._rpc({
