@@ -24,7 +24,8 @@ var SwitchCompanyMenu = Widget.extend({
         ev.preventDefault();
         var company_id = $(ev.currentTarget).data('company-id');
         var menuID = $('a[data-menu-xmlid="hc_website.menu_hc_res_company"]').data('menu');
-        var reload_url = 'web#id='+ company_id +'&view_type=form&model=res.company&menu_id='+menuID;
+        //var reload_url = 'web#id='+ company_id +'&view_type=form&model=res.company&menu_id='+menuID;
+        var reload_url = 'web#view_type=list&model=crm.lead&menu_id=' + menuID + ''
         self._rpc({
                 model: 'res.users',
                 method: 'write',
