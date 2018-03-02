@@ -179,7 +179,12 @@ var ImageDialog = Widget.extend({
     },
     save: function () {
         if (this.options.select_images) {
-            return this.images;
+            var multi_images = this.images;
+            for(var i=0;i<multi_images.length;i++)
+            {
+                multi_images[i]['src'] = multi_images[i]['src'].replace('/160x120/','/')
+            }
+            return multi_images;
         }
 
         var img = this.images[0];
