@@ -52,6 +52,7 @@
             <li><a href="#editor-media-icon" data-toggle="tab">Pictogram</a></li>
             <li><a href="#editor-media-video" data-toggle="tab">Video</a></li>
             <li><a href="#editor-media-iframe" data-toggle="tab">Iframe</a></li>
+            <li><a href="#editor-media-cropimage" class="imagecroptab" data-toggle="tab">Crop Image</a></li>
             <li class="search">
                 <ul class="pager mb0 mt0">
                     <li class="previous">
@@ -77,6 +78,7 @@
             <div class="tab-pane fade" id="editor-media-icon"/>
             <div class="tab-pane fade" id="editor-media-video"/>
             <div class="tab-pane fade" id="editor-media-iframe"/>
+            <div class="tab-pane fade" id="editor-media-cropimage"/>
         </div>
     </div>
 
@@ -249,6 +251,18 @@
                 <div class="media_iframe_video">
                     <div class="media_iframe_video_size"/>
                     <iframe class="o_video_dialog_iframe" allowfullscreen="allowfullscreen" frameborder="0" src=""/>
+                </div>
+            </div>
+        </form>
+    </t>
+    
+    <!--Image Cropping Dialog Hotels Centric-->
+    <t t-name="web_editor.dialog.cropimage">
+        <form action="#" class="form-inline well">
+            <div class="o_imagecrop_dialog_form">
+                <div class="form-group" id="o_video_form_group">
+                    <button class="btn btn-primary load_cropimage" type="button">Start Cropping</button>
+                    <img id="image_cropper" class="img hc_img_crop img-responsive" style="width:100%; height:100%;" src="/hc_website/static/src/img/default_block.jpg" alt="Odoo - Sample 1 for three images"/>
                 </div>
             </div>
         </form>
