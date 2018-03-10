@@ -217,6 +217,8 @@ var ImageDialog = Widget.extend({
         }
 
         $(this.media).attr('alt', img.alt);
+        this.style = {"width": "100%","height":"100%"};
+        this.media.setAttribute("style","width:100%;height:100%;");
         var style = this.style;
         if (style) { $(this.media).css(style); }
 
@@ -990,6 +992,7 @@ var MediaDialog = Dialog.extend({
             if (this.media) {
                 if (this.media.nodeName === "IMG") {
                     this.$('[href="#editor-media-image"]').tab('show');
+                    this.$('[href="##editor-media-cropimage"]').tab('show');
                 } else if ($(this.media).is('a.o_image')) {
                     this.$('[href="#editor-media-document"]').tab('show');
                 } else if (this.media.className.match(/(^|\s)media_iframe_video($|\s)/)) {
@@ -1017,6 +1020,8 @@ var MediaDialog = Dialog.extend({
             this.videoDialog.appendTo(this.$("#editor-media-video"));
             this.iframeDialog = new IframeDialog(this, this.media, this.options);
             this.iframeDialog.appendTo(this.$("#editor-media-iframe"));
+            this.CropimageDialog = new CropimageDialog(this, this.media, this.options);
+            this.CropimageDialog.appendTo(this.$("#editor-media-cropimage"));
         }
 
         this.active = this.imageDialog;
@@ -1037,6 +1042,9 @@ var MediaDialog = Dialog.extend({
                 self.$('.nav-tabs li.search').addClass("hidden");
             } else if ($(event.target).is('[href="#editor-media-iframe"]')) {
                 self.active = self.iframeDialog;
+                self.$('.nav-tabs li.search').addClass("hidden");
+            } else if ($(event.target).is('[href="#editor-media-cropimage"]')) {
+                self.active = self.CropimageDialog;
                 self.$('.nav-tabs li.search').addClass("hidden");
             }
         });
@@ -1517,6 +1525,156 @@ var IframeDialog = Widget.extend({
         this._updateVideo();
     },
 });
+    
+// Crop widget customized for Hotelscentric
+var CropimageDialog = Widget.extend({
+    template: 'web_editor.dialog.cropimage',
+    xmlDependencies: ['/web_editor/static/src/xml/editor.xml'],
+    events : {
+        'click .load_cropimage': 'bindCroppie',
+    },
+
+    /**
+     * @constructor
+     */
+    init: function (parent, media) {
+        this._super.apply(this, arguments);
+        this.parent = parent;
+        this.media = media;
+    },
+    /**
+     * @override
+     */
+    start: function () {
+        this.cropBoxResizable = false;
+        if(this.media.classList.contains("two_images"))
+        {
+            this.org_width = 524;
+            this.org_height = 240;
+        }
+        else if(this.media.classList.contains("two_images"))
+        {
+            this.org_width = 334;
+            this.org_height = 240;
+        }
+        else if(this.media.classList.contains("three_images_small"))
+        {
+            this.org_width = 334;
+            this.org_height = 150;
+        }
+        else if(this.media.classList.contains("three_images_small"))
+        {
+            this.org_width = 334;
+            this.org_height = 150;
+        }
+        else if(this.media.classList.contains("single_image"))
+        {
+            this.org_width = 1062;
+            this.org_height = 480;
+        }
+        else if(this.media.name == 'prop_image')
+        {
+            this.org_width = 205;
+            this.org_height = 87;
+        }
+        else if(this.media.name == 'image')
+        {
+            this.org_width = 1200;
+            this.org_height = 480;
+        }
+        else
+        {
+            this.cropBoxResizable = true;
+        }
+        //this.media.setAttribute("style","width:100%;height:100%;");
+        this.$('.hc_img_crop').attr('src',this.media.src);
+        return this._super.apply(this, arguments);
+
+    },
+
+    bindCroppie: function () {
+        console.log('Binding croppie')
+        var image = $('#image_cropper')[0];
+        var media = this.media;
+        var org_width = this.org_width;
+        var org_height = this.org_height;
+        this.cropper = new Cropper(image, {
+            dragMode: 'move',
+            //aspectRatio: 16 / 9,
+            //autoCropArea: 0.65,
+            restore: false,
+            guides: false,
+            center: false,
+            highlight: false,
+            cropBoxMovable: false,
+            cropBoxResizable: this.cropBoxResizable,
+            toggleDragModeOnDblclick: false,
+            ready: function () {
+                var cropper = this.cropper;
+                //cropper.minContainerWidth = 1000;
+                var containerData = cropper.getContainerData();
+                var cropboxData = cropper.getCropBoxData();
+                console.log('getCropBoxData - ', media.width, media.height)
+                cropper.setCropBoxData({
+                    left: (containerData.width - org_width) / 2,
+                    top : (containerData.height - org_height) / 2,
+                    width: org_width,
+                    height : org_height,
+                });
+
+            }
+            //crop: function(event) {
+            //    console.log(event.detail.x);
+            //    console.log(event.detail.y);
+            //    console.log(event.detail.width);
+            //    console.log(event.detail.height);
+            //    console.log(event.detail.rotate);
+            //    console.log(event.detail.scaleX);
+            //    console.log(event.detail.scaleY);
+            //}
+        });
+        //this.cropper.setCropBoxData({
+        //    left:0,
+        //    top:0,
+        //    width:100,
+        //    height:50,
+        //})
+    },
+    /**
+     * @override
+     */
+    save: function () {
+
+        var media = this.media;
+        var cropper_data = this.cropper.getData();
+        var org_width = this.org_width;
+        var org_height = this.org_height;
+        var imageData = this.cropper.getImageData();
+        var previewAspectRatio = Math.round(cropper_data['width']) / Math.round(cropper_data['height']);
+
+        var previewWidth = org_width;
+        var previewHeight = previewWidth / previewAspectRatio;
+        var imageScaledRatio = Math.round(cropper_data['width']) / previewWidth;
+
+        var cropper_width =  Math.round(imageData.naturalWidth / imageScaledRatio);
+        var cropper_height =  Math.round(imageData.naturalHeight / imageScaledRatio);
+        var cropper_left = -Math.round(Math.round(cropper_data['x']) / imageScaledRatio);
+        var cropper_top = -Math.round(Math.round(cropper_data['y']) / imageScaledRatio);
+        media.setAttribute("style", "min-width : 0;" +
+                                    "min-height: 0;" +
+                                    "max-height: none;" +
+                                    "max-width : none;" +
+                                    "width     :"+cropper_width+"px;"+
+                                    "height    :"+cropper_height+"px;"+
+                                    "margin-top  : "+cropper_top+"px;" +
+                                    "margin-left : "+cropper_left+"px;"
+                                    );
+        this.cropper.destroy();
+    },
+
+
+});
+    
 
 return {
     Dialog: Dialog,
