@@ -1020,9 +1020,9 @@ var MediaDialog = Dialog.extend({
             this.videoDialog.appendTo(this.$("#editor-media-video"));
             this.iframeDialog = new IframeDialog(this, this.media, this.options);
             this.iframeDialog.appendTo(this.$("#editor-media-iframe"));
-            this.CropimageDialog = new CropimageDialog(this, this.media, this.options);
-            this.CropimageDialog.appendTo(this.$("#editor-media-cropimage"));
         }
+        this.CropimageDialog = new CropimageDialog(this, this.media, this.options);
+        this.CropimageDialog.appendTo(this.$("#editor-media-cropimage"));
 
         this.active = this.imageDialog;
 
