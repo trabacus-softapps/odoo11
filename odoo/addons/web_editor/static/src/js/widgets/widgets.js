@@ -1577,10 +1577,15 @@ var CropimageDialog = Widget.extend({
             this.org_width = 205;
             this.org_height = 87;
         }
-        else if(this.media.name == 'image')
+        else if(this.media.name == 'image' || this.media.name == 'ban_image' || this.media.name == 'banner_image')
         {
-            this.org_width = 1200;
+            this.org_width = 1340;
             this.org_height = 480;
+        }
+        else if(this.media.name == 'prom_image' || this.media.name == 'room_image')
+        {
+            this.org_width = 360;
+            this.org_height = 239;
         }
         else
         {
