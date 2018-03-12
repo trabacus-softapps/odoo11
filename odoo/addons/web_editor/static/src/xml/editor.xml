@@ -52,7 +52,7 @@
             <li><a href="#editor-media-icon" data-toggle="tab">Pictogram</a></li>
             <li><a href="#editor-media-video" data-toggle="tab">Video</a></li>
             <li><a href="#editor-media-iframe" data-toggle="tab">Iframe</a></li>
-            <li><a href="#editor-media-cropimage" class="imagecroptab" data-toggle="tab">Crop Image</a></li>
+            <!-- <li><a href="#editor-media-cropimage" class="imagecroptab" data-toggle="tab">Crop Image</a></li> -->
             <li class="search">
                 <ul class="pager mb0 mt0">
                     <li class="previous">
