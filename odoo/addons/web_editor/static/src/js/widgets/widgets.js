@@ -1547,6 +1547,11 @@ var CropimageDialog = Widget.extend({
      */
     start: function () {
         this.cropBoxResizable = false;
+        var base_model='';
+        if(this.el.baseURI)
+        {
+            base_model = this.el.baseURI.split('&')[2].split('=')[1];
+        }
         if(this.media.classList.contains("two_images"))
         {
             this.org_width = 524;
@@ -1569,8 +1574,8 @@ var CropimageDialog = Widget.extend({
         }
         else if(this.media.classList.contains("single_image"))
         {
-            this.org_width = 1062;
-            this.org_height = 480;
+            this.org_width = 1280;
+            this.org_height = 540;
         }
         else if(this.media.name == 'prop_image')
         {
@@ -1579,12 +1584,12 @@ var CropimageDialog = Widget.extend({
         }
         else if(this.media.name == 'image' && base_model == 'res.company')
         {
-            this.org_width = 1340;
-            this.org_height = 480;
+            this.org_width = 1280;
+            this.org_height = 540;
         }
         else if(this.media.name == 'ban_image' || this.media.name == 'banner_image' || this.media.name == 'prop_image')
         {
-            this.org_width = 1340;
+            this.org_width = 1280;
             this.org_height = 360;
         }
         else if(this.media.name == 'image' && base_model == 'hc.room')
@@ -1615,58 +1620,27 @@ var CropimageDialog = Widget.extend({
         var org_height = this.org_height;
         this.cropper = new Cropper(image, {
             dragMode: 'move',
-            //aspectRatio: 16 / 9,
-            //autoCropArea: 0.65,
             restore: false,
             guides: false,
             center: false,
             highlight: false,
-            zoomable: false,
             cropBoxMovable: false,
             cropBoxResizable: this.cropBoxResizable,
             toggleDragModeOnDblclick: false,
             ready: function () {
                 var cropper = this.cropper;
-                //cropper.minContainerWidth = 1000;
                 var containerData = cropper.getContainerData();
                 var cropboxData = cropper.getCropBoxData();
                 var Imagedata = cropper.getImageData();
-                var div_value = 1;
-               /* if(org_width > containerData.width)
-                {
-                    div_value = 2;
-                }*/
-                console.log('getCropBoxData - ', div_value,media.width, media.height)
                 cropper.setCropBoxData({
-                    left: (containerData.width - org_width/div_value) / 2,
-                    top : (containerData.height - org_height/div_value) / 2,
-                    width: org_width/div_value,
-                    height : org_height/div_value,
+                    width: org_width,
+                    height : org_height,
                 });
-
                 cropper.setCanvasData({
-                    left: (containerData.width - (Imagedata['naturalWidth']/div_value))/2,
-                    top : (containerData.height - (Imagedata['naturalHeight']/div_value))/2,
-                    width: Imagedata['naturalWidth']/div_value,
-                    height : Imagedata['naturalHeight']/div_value,
+                    width: containerData.width,
                 });
             }
-            //crop: function(event) {
-            //    console.log(event.detail.x);
-            //    console.log(event.detail.y);
-            //    console.log(event.detail.width);
-            //    console.log(event.detail.height);
-            //    console.log(event.detail.rotate);
-            //    console.log(event.detail.scaleX);
-            //    console.log(event.detail.scaleY);
-            //}
         });
-        //this.cropper.setCropBoxData({
-        //    left:0,
-        //    top:0,
-        //    width:100,
-        //    height:50,
-        //})
     },
     /**
      * @override
@@ -1674,44 +1648,14 @@ var CropimageDialog = Widget.extend({
     save: function () {
 
         var media = this.media;
-        var cropper_data = this.cropper.getData();
-        var org_width = this.org_width;
         var org_height = this.org_height;
-        var imageData = this.cropper.getImageData();
-        var previewAspectRatio = Math.round(cropper_data['width']) / Math.round(cropper_data['height']);
-
-        var previewWidth = org_width;
-        var previewHeight = previewWidth / previewAspectRatio;
-        var imageScaledRatio = Math.round(cropper_data['width']) / previewWidth;
-        console.log('cropper_data',cropper_data);
-
-        var cropper_width =  Math.round(cropper_data['width']+cropper_data['x']);
-        var cropper_height =  Math.round(cropper_data['height']+cropper_data['y']);
-        var cropper_left = -Math.round(cropper_data['x']);
-        var cropper_top = -Math.round(cropper_data['y']);
-        media.setAttribute("style", "min-width : 0;" +
-                                    "min-height: 0;" +
-                                    "max-height: none;" +
-                                    "max-width : none;" +
-//                                    "width     : "+cropper_width+"px;" +
-                                    "height    : "+cropper_height+"px;" +
-                                    "margin-top  : "+cropper_top+"px;" +
-                                    "margin-left : "+cropper_left+"px;"
-                                    );
-
-//        var cropper_width =  Math.round(imageData.naturalWidth / imageScaledRatio);
-//        var cropper_height =  Math.round(imageData.naturalHeight / imageScaledRatio);
-//        var cropper_left = -Math.round(Math.round(cropper_data['x']) / imageScaledRatio);
-//        var cropper_top = -Math.round(Math.round(cropper_data['y']) / imageScaledRatio);
-//        media.setAttribute("style", "min-width : 0;" +
-//                                    "min-height: 0;" +
-//                                    "max-height: none;" +
-//                                    "max-width : none;" +
-//                                    "width     :"+cropper_width+"px;"+
-//                                    "height    :"+cropper_height+"px;"+
-//                                    "margin-top  : "+cropper_top+"px;" +
-//                                    "margin-left : "+cropper_left+"px;"
-//                                    );
+        var cropper_data = this.cropper.getCroppedCanvas({
+          height: org_height,
+          fillColor: '#fff',
+//          imageSmoothingEnabled: false,
+//          imageSmoothingQuality: 'low',
+        });
+        media.src = cropper_data.toDataURL();
         this.cropper.destroy();
     },
 
