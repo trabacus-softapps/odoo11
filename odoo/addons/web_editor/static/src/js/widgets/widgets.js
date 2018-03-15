@@ -1635,6 +1635,8 @@ var CropimageDialog = Widget.extend({
                 var cropboxData = cropper.getCropBoxData();
                 var Imagedata = cropper.getImageData();
                 cropper.setCropBoxData({
+                    left: (containerData.width - org_width)/2,
+                    top: (containerData.height - org_height)/2,
                     width: org_width,
                     height : org_height,
                 });
