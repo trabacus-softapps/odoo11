@@ -1547,6 +1547,7 @@ var CropimageDialog = Widget.extend({
      */
     start: function () {
         this.cropBoxResizable = false;
+        this.html_editor = true;
         var base_model='';
         if(this.el.baseURI)
         {
@@ -1557,15 +1558,10 @@ var CropimageDialog = Widget.extend({
             this.org_width = 524;
             this.org_height = 240;
         }
-        else if(this.media.classList.contains("two_images"))
+        else if(this.media.classList.contains("three_images"))
         {
             this.org_width = 334;
             this.org_height = 240;
-        }
-        else if(this.media.classList.contains("three_images_small"))
-        {
-            this.org_width = 334;
-            this.org_height = 150;
         }
         else if(this.media.classList.contains("three_images_small"))
         {
@@ -1574,37 +1570,43 @@ var CropimageDialog = Widget.extend({
         }
         else if(this.media.classList.contains("single_image"))
         {
-            this.org_width = 1280;
-            this.org_height = 540;
+            this.org_width = 1062;
+            this.org_height = 480;
         }
         else if(this.media.name == 'prop_image')
         {
             this.org_width = 205;
             this.org_height = 87;
+            this.html_editor = false;
         }
         else if(this.media.name == 'image' && base_model == 'res.company')
         {
             this.org_width = 1280;
             this.org_height = 540;
+            this.html_editor = false;
         }
         else if(this.media.name == 'ban_image' || this.media.name == 'banner_image' || this.media.name == 'prop_image')
         {
             this.org_width = 1280;
             this.org_height = 360;
+            this.html_editor = false;
         }
         else if(this.media.name == 'image' && base_model == 'hc.room')
         {
             this.org_width = 750;
             this.org_height = 405;
+            this.html_editor = false;
         }
         else if(this.media.name == 'room_image')
         {
             this.org_width = 360;
             this.org_height = 240;
+            this.html_editor = false;
         }
         else
         {
             this.cropBoxResizable = true;
+            this.html_editor = false;
         }
         //this.media.setAttribute("style","width:100%;height:100%;");
         this.$('.hc_img_crop').attr('src',this.media.src);
@@ -1648,14 +1650,43 @@ var CropimageDialog = Widget.extend({
     save: function () {
 
         var media = this.media;
+        var html_editor = this.html_editor
         var org_height = this.org_height;
-        var cropper_data = this.cropper.getCroppedCanvas({
-          height: org_height,
-          fillColor: '#fff',
-//          imageSmoothingEnabled: false,
-//          imageSmoothingQuality: 'low',
-        });
-        media.src = cropper_data.toDataURL();
+        var org_width = this.org_width;
+
+        if(html_editor)
+        {
+            var cropper_data = this.cropper.getData();
+            var imageData = this.cropper.getImageData();
+            var previewAspectRatio = Math.round(cropper_data['width']) / Math.round(cropper_data['height']);
+            var previewWidth = org_width;
+            var previewHeight = previewWidth / previewAspectRatio;
+            var imageScaledRatio = Math.round(cropper_data['width']) / previewWidth;
+
+
+            var cropper_width =  Math.round(imageData.naturalWidth / imageScaledRatio);
+            var cropper_height =  Math.round(imageData.naturalHeight / imageScaledRatio);
+            var cropper_left = -Math.round(Math.round(cropper_data['x']) / imageScaledRatio);
+            var cropper_top = -Math.round(Math.round(cropper_data['y']) / imageScaledRatio);
+            media.setAttribute("style", "min-width : 0;" +
+                                    "min-height: 0;" +
+                                    "max-height: none;" +
+                                    "max-width : none;" +
+                                    "width     :"+cropper_width+"px;"+
+                                    "height    :"+cropper_height+"px;"+
+                                    "margin-top  : "+cropper_top+"px;" +
+                                    "margin-left : "+cropper_left+"px;"
+                                    );
+        }
+        else
+        {
+            var cropper_data = this.cropper.getCroppedCanvas({
+                         height: org_height,
+                         fillColor: '#fff',
+            });
+            media.src = cropper_data.toDataURL();
+        }
+
         this.cropper.destroy();
     },
 
