@@ -1551,66 +1551,74 @@ var CropimageDialog = Widget.extend({
         var base_model='';
         if(this.el.baseURI)
         {
-            base_model = this.el.baseURI.split('&')[2].split('=')[1];
+            base_model = this.el.baseURI.split('&')
+            if(base_model.length > 1)
+            {
+                base_model = base_model[2].split('=')[1];
+            }
+
         }
-        if(this.media.classList.contains("two_images"))
+        if(this.media)
         {
-            this.org_width = 524;
-            this.org_height = 240;
+            if(this.media.classList.contains("two_images"))
+            {
+                this.org_width = 519;
+                this.org_height = 240;
+            }
+            else if(this.media.classList.contains("three_images"))
+            {
+                this.org_width = 334;
+                this.org_height = 240;
+            }
+            else if(this.media.classList.contains("three_images_small"))
+            {
+                this.org_width = 334;
+                this.org_height = 150;
+            }
+            else if(this.media.classList.contains("single_image"))
+            {
+                this.org_width = 1062;
+                this.org_height = 480;
+            }
+            else if(this.media.name == 'prop_image')
+            {
+                this.org_width = 205;
+                this.org_height = 87;
+                this.html_editor = false;
+            }
+            else if(this.media.name == 'image' && base_model == 'res.company')
+            {
+                this.org_width = 1280;
+                this.org_height = 540;
+                this.html_editor = false;
+            }
+            else if(this.media.name == 'ban_image' || this.media.name == 'banner_image' || this.media.name == 'prop_image')
+            {
+                this.org_width = 1280;
+                this.org_height = 360;
+                this.html_editor = false;
+            }
+            else if(this.media.name == 'image' && base_model == 'hc.room')
+            {
+                this.org_width = 750;
+                this.org_height = 405;
+                this.html_editor = false;
+            }
+            else if(this.media.name == 'room_image')
+            {
+                this.org_width = 360;
+                this.org_height = 240;
+                this.html_editor = false;
+            }
+            else
+            {
+                this.cropBoxResizable = true;
+                this.html_editor = false;
+            }
+            //this.media.setAttribute("style","width:100%;height:100%;");
+            this.$('.hc_img_crop').attr('src',this.media.src);
+            return this._super.apply(this, arguments);
         }
-        else if(this.media.classList.contains("three_images"))
-        {
-            this.org_width = 334;
-            this.org_height = 240;
-        }
-        else if(this.media.classList.contains("three_images_small"))
-        {
-            this.org_width = 334;
-            this.org_height = 150;
-        }
-        else if(this.media.classList.contains("single_image"))
-        {
-            this.org_width = 1062;
-            this.org_height = 480;
-        }
-        else if(this.media.name == 'prop_image')
-        {
-            this.org_width = 205;
-            this.org_height = 87;
-            this.html_editor = false;
-        }
-        else if(this.media.name == 'image' && base_model == 'res.company')
-        {
-            this.org_width = 1280;
-            this.org_height = 540;
-            this.html_editor = false;
-        }
-        else if(this.media.name == 'ban_image' || this.media.name == 'banner_image' || this.media.name == 'prop_image' || this.media.name == 'prom_image')
-        {
-            this.org_width = 1280;
-            this.org_height = 360;
-            this.html_editor = false;
-        }
-        else if(this.media.name == 'image' && base_model == 'hc.room')
-        {
-            this.org_width = 750;
-            this.org_height = 405;
-            this.html_editor = false;
-        }
-        else if(this.media.name == 'room_image')
-        {
-            this.org_width = 360;
-            this.org_height = 240;
-            this.html_editor = false;
-        }
-        else
-        {
-            this.cropBoxResizable = true;
-            this.html_editor = false;
-        }
-        //this.media.setAttribute("style","width:100%;height:100%;");
-        this.$('.hc_img_crop').attr('src',this.media.src);
-        return this._super.apply(this, arguments);
 
     },
 
