@@ -33,7 +33,7 @@ var SwitchCompanyMenu = Widget.extend({
             })
             .then(function() {
                 window.location.href = reload_url;
-//                 location.reload();
+                location.reload();
             });
     }, 1500, true));
 
