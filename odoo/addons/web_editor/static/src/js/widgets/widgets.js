@@ -1580,6 +1580,11 @@ var CropimageDialog = Widget.extend({
                 this.org_width = 1062;
                 this.org_height = 480;
             }
+            else if(this.media.classList.contains("c_single_image"))
+            {
+                this.org_width = 1062;
+                this.org_height = 400;
+            }
             else if(this.media.name == 'prop_image')
             {
                 this.org_width = 205;
