@@ -18,9 +18,9 @@
             <field name="groups_id" eval="[(4,ref('group_pos_manager'))]"/>
         </record>
 
-        <record id="base.user_demo" model="res.users">
+<!--         <record id="base.user_demo" model="res.users">
             <field name="groups_id" eval="[(4, ref('group_pos_user'))]"/>
-        </record>
+        </record> -->
 
         <!-- Resource: pos.category -->
         <record id="fruits_vegetables" model="pos.category">
