@@ -208,7 +208,7 @@ If you have development competencies, we can propose you specific traineeships</
 
       <record id="employee_qdp" model="hr.employee">
           <field name="name">Gilles Gravie</field>
-          <field name="user_id" ref="base.user_demo"/>
+<!--           <field name="user_id" ref="base.user_demo"/> -->
           <field name="department_id" ref="dep_rd"/>
           <field name="parent_id" ref="employee_al"/>
           <field name="job_id" ref="hr.job_developer"/>
