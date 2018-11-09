@@ -1615,6 +1615,78 @@ var CropimageDialog = Widget.extend({
                 this.org_height = 240;
                 this.html_editor = false;
             }
+            else if(this.media && this.media.name == 'dest_image' && base_model == 'hc.destinations' )
+            {
+                this.org_width = 1305;
+                this.org_height = 400;
+                this.html_editor = false;
+            }
+            else if(this.media && this.media.name == 'prom_image' && base_model == 'hc.prom_line' )
+            {
+                this.org_width = 334;
+                this.org_height = 250;
+                this.html_editor = false;
+            }
+            else if(this.media && this.media.name == 'res_image' && base_model == 'hc.resort' )
+            {
+                this.org_width = 1305;
+                this.org_height = 400;
+                this.html_editor = false;
+            }
+            else if(this.media && this.media.name == 'image' && base_model == 'hc.resort.line.details' )
+            {
+                this.org_width = 276;
+                this.org_height = 200;
+                this.html_editor = false;
+            }
+            else if(this.media && this.media.name == 'image' && base_model == 'hc.resort.line.images' )
+            {
+                this.org_width = 722;
+                this.org_height = 336;
+                this.html_editor = false;
+            }
+            else if(this.media && this.media.name == 'dest_image' && base_model == 'hc.destinations.line' )
+            {
+                this.org_width = 350;
+                this.org_height = 233;
+                this.html_editor = false;
+            }
+            else if(this.media && this.media.name == 'banner_image' && base_model == 'hc.destinations.line' )
+            {
+                this.org_width = 1305;
+                this.org_height = 700;
+                this.html_editor = false;
+            }
+            else if(this.media && this.media.name == 'prom_image' && base_model == 'hc.promotion' )
+            {
+                this.org_width = 1305;
+                this.org_height = 400;
+                this.html_editor = false;
+            }
+            else if(this.media && this.media.name == 'ban_image' && base_model == 'hc.review' )
+            {
+                this.org_width = 1305;
+                this.org_height = 400;
+                this.html_editor = false;
+            }
+            else if(this.media && this.media.name == 'ban_image' && base_model == 'hc.gallery' )
+            {
+                this.org_width = 1305;
+                this.org_height = 400;
+                this.html_editor = false;
+            }
+            else if(this.media && this.media.name == 'ban_image' && base_model == 'hc.social.feed' )
+            {
+                this.org_width = 1305;
+                this.org_height = 400;
+                this.html_editor = false;
+            }
+            else if(this.media && this.media.name == 'iti_image' && base_model == 'days.info' )
+            {
+                this.org_width = 1009;
+                this.org_height = 468;
+                this.html_editor = false;
+            }
             else
             {
                 this.cropBoxResizable = true;
