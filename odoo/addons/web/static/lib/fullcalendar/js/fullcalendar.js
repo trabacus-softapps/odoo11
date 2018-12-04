@@ -6193,7 +6193,7 @@ DayGrid.mixin({
 		// Give preference to elements with certain criteria, so they have
 		// a chance to be closer to the top.
 		this.sortEventSegs(segs);
-
+		
 		for (i = 0; i < segs.length; i++) {
 			seg = segs[i];
 
@@ -6718,101 +6718,32 @@ var TimeGrid = FC.TimeGrid = Grid.extend(DayTableMixin, {
 		var isLabeled;
 		var axisHtml;
 
-		// Added For HC Booking Calendar starts here
-		var vars = [], hash;
-		var book_cal_data = [];
-        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-        var refer = window.location.href;
-        var calendar_html = '';
-        console.log('kkkfdfmfdm ===',refer);
-        if (refer)
-        {
-            var is_book_cal = $.ajax({
-                type: "post",
-                async: false,
-                url: "/check_booking_calendar",
-                data:{refer},
-                dataType: "json",
-            });
-            book_cal_data = is_book_cal.responseJSON;
-            if (book_cal_data.is_book_cal)
-            {
-                console.log('success ====');
-                $('.o_calendar_button_month,.o_calendar_button_day').addClass("hidden");
-                var booking_result = $.ajax({
-                        type: "post",
-                        async: false,
-                        url: "/get_display_info",
-                        data:{},
-                        dataType: "json",
-                });
-                booking_data = booking_result.responseJSON;
-                for (var i=0;i<booking_data.length;i++)
-                {
-                    calendar_html += '<tr> <td>' + booking_data[i]['name'] + '</td> </tr>';
-                }
-                return calendar_html;
-                console.log("return html",booking_result,calendar_html);
-            }
-            else
-            {
-                while (slotTime < this.maxTime) {
-                    slotDate = this.start.clone().time(slotTime);
-                    isLabeled = isInt(divideDurationByDuration(slotTime, this.labelInterval));
-
-                    axisHtml =
-                        '<td class="fc-axis fc-time ' + view.widgetContentClass + '" ' + view.axisStyleAttr() + '>' +
-                            (isLabeled ?
-                                '<span>' + // for matchCellWidths
-                                    htmlEscape(slotDate.format(this.labelFormat)) +
-                                '</span>' :
-                                ''
-                                ) +
-                        '</td>';
-
-                    html +=
-                        '<tr data-time="' + slotDate.format('HH:mm:ss') + '"' +
-                            (isLabeled ? '' : ' class="fc-minor"') +
-                            '>' +
-                            (!isRTL ? axisHtml : '') +
-                            '<td class="' + view.widgetContentClass + '"/>' +
-                            (isRTL ? axisHtml : '') +
-                        "</tr>";
-
-                    slotTime.add(this.slotDuration);
-                }
-            }
-            console.log('GGGGGG ====',book_cal_data[1]);
-        }
-        // Added For HC Booking Calendar ends here
-
-
 		// Calculate the time for each slot
-//		while (slotTime < this.maxTime) {
-//			slotDate = this.start.clone().time(slotTime);
-//			isLabeled = isInt(divideDurationByDuration(slotTime, this.labelInterval));
-//
-//			axisHtml =
-//				'<td class="fc-axis fc-time ' + view.widgetContentClass + '" ' + view.axisStyleAttr() + '>' +
-//					(isLabeled ?
-//						'<span>' + // for matchCellWidths
-//							htmlEscape(slotDate.format(this.labelFormat)) +
-//						'</span>' :
-//						''
-//						) +
-//				'</td>';
-//
-//			html +=
-//				'<tr data-time="' + slotDate.format('HH:mm:ss') + '"' +
-//					(isLabeled ? '' : ' class="fc-minor"') +
-//					'>' +
-//					(!isRTL ? axisHtml : '') +
-//					'<td class="' + view.widgetContentClass + '"/>' +
-//					(isRTL ? axisHtml : '') +
-//				"</tr>";
-//
-//			slotTime.add(this.slotDuration);
-//		}
+		while (slotTime < this.maxTime) {
+			slotDate = this.start.clone().time(slotTime);
+			isLabeled = isInt(divideDurationByDuration(slotTime, this.labelInterval));
+
+			axisHtml =
+				'<td class="fc-axis fc-time ' + view.widgetContentClass + '" ' + view.axisStyleAttr() + '>' +
+					(isLabeled ?
+						'<span>' + // for matchCellWidths
+							htmlEscape(slotDate.format(this.labelFormat)) +
+						'</span>' :
+						''
+						) +
+				'</td>';
+
+			html +=
+				'<tr data-time="' + slotDate.format('HH:mm:ss') + '"' +
+					(isLabeled ? '' : ' class="fc-minor"') +
+					'>' +
+					(!isRTL ? axisHtml : '') +
+					'<td class="' + view.widgetContentClass + '"/>' +
+					(isRTL ? axisHtml : '') +
+				"</tr>";
+
+			slotTime.add(this.slotDuration);
+		}
 
 		return html;
 	},
