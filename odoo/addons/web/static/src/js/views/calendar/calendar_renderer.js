@@ -167,13 +167,7 @@ return AbstractRenderer.extend({
         this.model = params.model;
         this.filters = [];
         this.color_map = {};
-        console.log('PPPPPPPPPPPP',params);
-        console.log('PPP FFFFF SSSSSS',params.displayFields);
-        var ajax = require('web.ajax');
-        var sample = ajax.jsonRpc("/get_display_info", 'call', {
-		}).then(function (data) {
-			console.log('dadadaadadada',data);
-		});
+
         if (params.eventTemplate) {
             this.qweb = new QWeb(session.debug, {_s: session.origin});
             this.qweb.add_template(utils.json_node_to_xml(params.eventTemplate));
@@ -322,7 +316,6 @@ return AbstractRenderer.extend({
         var self = this;
 
         this.$calendar = this.$(".o_calendar_widget");
-        console.log('reeeeeeeeeeeeeeeee');
 
         //Documentation here : http://arshaw.com/fullcalendar/docs/
         var fc_options = $.extend({}, this.state.fc_options, {
@@ -333,7 +326,6 @@ return AbstractRenderer.extend({
                 self.trigger_up('updateRecord', event);
             },
             eventClick: function (event) {
-                console.log('EVVVVVVVVVVVVVV');
                 self.trigger_up('openEvent', event);
                 self.$calendar.fullCalendar('unselect');
             },
@@ -342,8 +334,6 @@ return AbstractRenderer.extend({
                 if (self.state.context.default_name) {
                     data.title = self.state.context.default_name;
                 }
-                console.log('seseses',data);
-                console.log('sasesesecefeeee',event.record);
                 self.trigger_up('openCreate', data);
                 self.$calendar.fullCalendar('unselect');
             },
@@ -360,12 +350,6 @@ return AbstractRenderer.extend({
                     if (display_hour === '00:00 - 00:00') {
                         display_hour = _t('All day');
                     }
-                }
-                var calender_event = event.title.split('/');
-                if(calender_event && calender_event.length > 1)
-                {
-                    element.find('.fc-content').parent().css('cursor','')
-                    element.find('.fc-content .fc-time').remove();
                 }
                 element.find('.fc-content .fc-time').text(display_hour);
             },
