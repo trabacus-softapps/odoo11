@@ -357,6 +357,7 @@ var BasicComposer = Widget.extend(chat_mixin, {
         'focusout .o_composer_button_emoji': '_onEmojiButtonFocusout',
         'focus .o_mail_emoji_container .o_mail_emoji': '_onEmojiImageFocus',
         'click .o_mail_emoji_container .o_mail_emoji': '_onEmojiImageClick',
+        "click .o_composer_button_queue": "send_message_queue",
     },
     // RPCs done to fetch the mention suggestions are throttled with the following value
     MENTION_THROTTLE: 200,
@@ -372,6 +373,7 @@ var BasicComposer = Widget.extend(chat_mixin, {
             mention_fetch_limit: 8,
             mention_partners_restricted: false, // set to true to only suggest prefetched partners
             send_text: _t('Send'),
+            queue_text: _t('Queue'),
             default_body: '',
             default_mention_selections: {},
             isMobile: config.device.isMobile
@@ -483,6 +485,28 @@ var BasicComposer = Widget.extend(chat_mixin, {
             self.$input.focus();
         });
     },
+    
+    send_message_queue: function () {
+        var self = this;
+        this.is_user = false;
+        var typemsg = this.$('.o_composer_input textarea').val();
+        var assigned_user = $('.o_active').attr("title");
+        console.log(assigned_user)
+
+        this._rpc({
+            route: '/send_queue_message',
+            params: {
+                msg : typemsg ,
+                assigned_to_user : assigned_user,
+            },
+        }).then(function (data) {
+                  if(data == true){
+                    $('.o_composer_input textarea').val('');
+                  }
+
+            });
+
+        },
 
     clear_composer: function() {
         // Empty input, selected partners and attachments
