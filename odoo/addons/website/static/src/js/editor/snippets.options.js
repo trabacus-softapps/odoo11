@@ -594,7 +594,7 @@ options.registry.gallery = options.Class.extend({
             for (var i = 0 ; i < attachments.length; i++) {
                 var imgsrc = attachments[i].src;
                 var imgid = imgsrc.split('/')[3];
-                imgsrc = imgsrc.replace(imgid,imgid + '/320x0');
+                imgsrc = imgsrc.replace(imgid,imgid + '/640x0');
                 $('<img/>', {
                     class: 'img img-responsive',
                     src: imgsrc,
