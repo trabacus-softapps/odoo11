@@ -1565,6 +1565,11 @@ var CropimageDialog = Widget.extend({
                 this.org_width = 519;
                 this.org_height = 240;
             }
+            else if(this.media.classList.contains("two_images_small"))
+            {
+                this.org_width = 519;
+                this.org_height = 150;
+            }
             else if(this.media.classList.contains("three_images"))
             {
                 this.org_width = 334;
