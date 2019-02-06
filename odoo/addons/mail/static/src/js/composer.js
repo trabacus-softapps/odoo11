@@ -487,23 +487,15 @@ var BasicComposer = Widget.extend(chat_mixin, {
     },
     
     send_message_queue: function () {
-        var self = this;
-        this.is_user = false;
-        var typemsg = this.$('.o_composer_input textarea').val();
         var assigned_user = $('.o_active').attr("title");
-        console.log(assigned_user)
-
-        this._rpc({
-            route: '/send_queue_message',
-            params: {
-                msg : typemsg ,
-                assigned_to_user : assigned_user,
-            },
-        }).then(function (data) {
-                  if(data == true){
-                    $('.o_composer_input textarea').val('');
-                  }
-
+        //Open wizard view of hc.discuss.queue
+            this.do_action({
+                name: 'Create a new Queue',
+                type: 'ir.actions.act_window',
+                res_model: 'hc.discuss.queue',
+                views: [[false, 'form']],
+                target: 'new',
+                context: {assigned_user: assigned_user}
             });
 
         },
