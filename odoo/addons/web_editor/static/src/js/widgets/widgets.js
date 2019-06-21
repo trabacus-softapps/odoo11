@@ -312,9 +312,8 @@ var ImageDialog = Widget.extend({
             args: [],
             kwargs: {
                 domain: domain,
-                fields: ['name', 'mimetype', 'checksum', 'url', 'type', 'hc_image_bank_id'],
+                fields: ['name', 'mimetype', 'checksum', 'url', 'type'],
                 order: [{name: 'id', desc: true}],
-                //order: [{name: 'hc_image_bank_id', asc: true},{name: 'write_date', desc: true}],
                 context: weContext.get(),
             }
         }).then(this.proxy('fetched_existing'));
